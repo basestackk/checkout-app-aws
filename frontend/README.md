@@ -1,4 +1,3 @@
-
 Checkout App with AWS
 
 This is a checkout application built to demonstrate microservices, event driven architecture
@@ -17,7 +16,6 @@ Redis
 DocumentDB
 DynamoDB
 Microservices Architecture
-CQRS
 GraphQL
 EventBridge
 APIGateway

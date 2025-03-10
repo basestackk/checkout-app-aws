@@ -1,0 +1,9 @@
+# Root-level serverless.yml
+custom:
+  serverless-offline-aws-eventbridge:
+    port: 4000  # Shared EventBridge port
+  
+plugins:
+  - serverless-offline-aws-eventbridge
+
+# Define any global services that are shared between the services (e.g., DynamoDB)

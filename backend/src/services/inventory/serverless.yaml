@@ -1,0 +1,133 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+service: inventory-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "events:PutEvents"
+      Resource: arn:aws:events:us-east-1:971422673053:event-bus/default
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: arn:aws:lambda:us-east-1:971422673053:function:* # Update with actual Lambda ARN
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Query"
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:BatchGetItem"
+      Resource: arn:aws:dynamodb:us-east-1:971422673053:table/inventory
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:UpdateItem"
+        - "dynamodb:Query"
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:BatchGetItem"
+      Resource: arn:aws:dynamodb:us-east-1:971422673053:table/inventory-db-read
+
+resources:
+  Resources:
+    InventoryTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: inventory
+        AttributeDefinitions:
+          - AttributeName: sku
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sku
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    InventoryReadTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: inventory-db-read
+        AttributeDefinitions:
+          - AttributeName: sku
+            AttributeType: S
+        KeySchema:
+          - AttributeName: sku
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+functions:
+  inventoryService:
+    handler: lib/services/inventory/command.handler
+    description: Inventory Service lambda function
+    environment:
+      INVENTORY_TABLE_NAME: inventory # DynamoDB table name
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - 'InventoryService'
+            detail-type:
+              - 'InventoryEvent'
+
+
+  InventoryServiceQuery:
+    handler: lib/services/inventory/query.handler
+    description: Inventory Service Query lambda function
+    environment:
+      INVENTORY_TABLE_NAME: inventory-db-read # DynamoDB table name
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - 'InventoryService'
+            detail-type:
+              - 'InventoryEvent'
+
+  eventBridgeTrigger:
+    handler: lib/services/inventory/query.handler
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - "InventoryService"
+              
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+  - serverless-offline-aws-eventbridge
+
+custom:
+  webpack:
+    includeModules: true
+  serverless-offline:
+    httpPort: 3000
+  serverless-offline-aws-eventbridge:
+    port: 4000  # Shared EventBridge port
+
+# Additional build configuration
+build:
+  source_directories:
+    - .
+    - node_modules/**
+    - lib/**
+    - application
+    - controllers
+    - middlewares
+    - models
+    - repositories
+    - ../../ipc
+
+# Package configuration
+package:
+  exclude:
+    - .gitignore
+  include:
+    - node_modules/**
+    - lib/**
+    - ../../ipc/node_modules/**

@@ -1,0 +1,111 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+service: order-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "events:PutEvents"
+      Resource: arn:aws:events:us-east-1:971422673053:event-bus/default
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: arn:aws:lambda:us-east-1:971422673053:function:* # Update with actual Lambda ARN
+    - Effect: "Allow"
+      Action:
+        - "docdb:DescribeDBClusters"
+        - "docdb:DescribeDBInstances"
+        - "docdb:Connect"
+      Resource: arn:aws:docdb:us-east-1:971422673053:dbcluster:orders-cluster  # Specify your DocumentDB cluster ARN
+
+resources:
+  Resources:
+    # DocumentDB cluster configuration (no need to define tables like DynamoDB)
+    OrderDbCluster:
+      Type: AWS::DocDB::DBCluster
+      Properties:
+        DBClusterIdentifier: order-db-cluster
+        MasterUsername: admin
+        MasterUserPassword: yourPassword # Make sure to use Secrets Manager in production
+        Engine: docdb
+        BackupRetentionPeriod: 7
+        PreferredBackupWindow: 03:00-04:00
+        PreferredMaintenanceWindow: Sun:06:00-Sun:07:00
+
+    OrderDbInstance:
+      Type: AWS::DocDB::DBInstance
+      Properties:
+        DBInstanceIdentifier: order-db-instance
+        DBClusterIdentifier: !Ref OrderDbCluster
+        DBInstanceClass: db.r5.large
+        Engine: docdb
+        PubliclyAccessible: false
+
+functions:
+  # The function to handle creating orders
+  OrderService:
+    handler: lib/services/order/command/command.handler
+    description: Create Order in DocumentDB
+    environment:
+      ORDER_DB_NAME: orders # The name of the database where the orders will be stored
+
+  # The function to query orders (fetch orders)
+  OrderServiceQuery:
+    handler: lib/services/order/query/query.handler
+    description: Fetch Orders from DocumentDB
+    environment:
+      ORDER_DB_NAME: orders # The name of the database
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - 'OrderService'
+            detail-type:
+              - 'OrderEvent'
+
+  # EventBridge trigger for order-related events
+  eventBridgeTrigger:
+    handler: lib/services/order/query/query.handler
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - "OrderService"
+
+plugins:
+  - serverless-offline
+  - serverless-offline-aws-eventbridge
+
+custom:
+  webpack:
+    includeModules: true
+  serverless-offline:
+    httpPort: 3000
+  serverless-offline-aws-eventbridge:
+    port: 4000  # Shared EventBridge port
+
+# Additional build configuration
+build:
+  source_directories:
+    - .
+    - node_modules/**
+    - lib/**
+    - application
+    - controllers
+    - middlewares
+    - models
+    - repositories
+    - ../../ipc
+
+# Package configuration
+package:
+  exclude:
+    - .gitignore
+  include:
+    - node_modules/**
+    - lib/**
+    - ../../ipc/node_modules/**

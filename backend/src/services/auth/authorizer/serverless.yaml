@@ -1,0 +1,59 @@
+service: authorizer-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  stage: dev
+  environment:
+    REDIS_URL: redis://localhost:6379
+
+resources:
+  Resources:
+    LambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: LambdaExecutionPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "redis:Get"
+                  Resource: "*"
+
+functions:
+  authorizer:
+    handler: src/handlers/authorizer.handler
+    events:
+      - http:
+          authorizer:
+            arn:
+              Fn::GetAtt: [AuthorizerLambdaFunction, Arn]
+            identitySource: "method.request.header.Authorization"
+            type: REQUEST
+          method: any
+          path: /graphql
+
+resources:
+  Resources:
+    AuthorizerLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Handler: src/handlers/authorizer.handler
+        Role: arn:aws:iam::${aws:accountId}:role/LambdaExecutionRole
+        CodeUri: ./src
+        Runtime: nodejs14.x
+        Timeout: 10
+        MemorySize: 128
+        Environment:
+          Variables:
+            REDIS_URL: redis://localhost:6379

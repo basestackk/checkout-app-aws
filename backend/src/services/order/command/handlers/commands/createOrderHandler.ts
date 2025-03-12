@@ -2,8 +2,8 @@ import {createOrder} from "../../../../../repositories/orderRepository";
 import { MessageService } from "../../../../../ipc/messaging-service";
 
 export async function CreateOrderHandler(
-  command: any,
-): Promise<Record<string, any>> {
+  command: Record<string, unknown>
+): Promise<Record<string, unknown>> {
   try {
     console.log("Successfully received create order command");
 
@@ -11,7 +11,7 @@ export async function CreateOrderHandler(
 
     const ipc = MessageService.getInstance("")
 
-    await ipc.sendEvent(command.payload, "OrderService", "orderCreated", "OrderEvent")
+    await ipc.sendEvent(command.payload as Record<string, unknown>, "OrderService", "orderCreated", "OrderEvent")
 
     return {
       message: "Order created successfully",

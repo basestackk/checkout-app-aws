@@ -1,8 +1,8 @@
 // src/handlers/logoutHandler.ts
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { APIGatewayProxyResult } from 'aws-lambda';
 import { serialize } from 'cookie';
 
-export async function logoutHandler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function logoutHandler(): Promise<APIGatewayProxyResult> {
   const refreshTokenCookie = serialize('refreshToken', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

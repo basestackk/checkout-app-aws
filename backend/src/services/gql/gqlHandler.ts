@@ -1,8 +1,9 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
 
 import { ApolloServer, gql } from 'apollo-server-lambda';
 import { MessageService } from '../../ipc';
+
+dotenv.config();
 
 const typeDefs = gql`
   type Product {
@@ -76,7 +77,6 @@ async function getCart(cartId: string): Promise<any> {
   }
 }
 
-// Inventory Service Handlers
 async function addItemToInventory(sku: string, name: string, quantity: number, description: string, price: number): Promise<boolean> {
   const commandPayload = {
     type: 'addItem',
@@ -122,6 +122,7 @@ async function getInventoryItems(): Promise<any> {
   const queryPayload = {
     type: 'getItems',
     payload: {
+      
     }
   };
 

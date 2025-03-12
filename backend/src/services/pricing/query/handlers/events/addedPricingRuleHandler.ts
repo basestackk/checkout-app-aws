@@ -1,15 +1,10 @@
 import {addPricingRule} from "../../../../../repositories/";
 
 export async function AddedPricingRuleHandler(
-  payload: any,
-): Promise<Record<string, any>> {
+  payload: Record<string, unknown>,
+): Promise<unknown> {
   try {
-
-    await addPricingRule("pricing-db-read", payload)
-
-    return {
-      message: "Pricing rule updated successfully",
-    };
+    return await addPricingRule("pricing-db-read", payload)
   } catch (error) {
     throw new Error("Error in updating pricing rule: " + (error as Error).message);
   }

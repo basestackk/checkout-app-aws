@@ -7,8 +7,8 @@ async function addItemToCart(tableName: string, payload: any) {
 
   const updateParams = {
     Key: {
-      cartId: cartId,
-      sku: sku,
+      cartId,
+      sku,
     },
     UpdateExpression:
       "SET " +
@@ -67,8 +67,8 @@ async function removeItemFromCart(
 
   const updateParams = {
     Key: {
-      cartId: cartId,
-      sku: sku,
+      cartId,
+      sku,
     },
     UpdateExpression:
       "SET quantity = if_not_exists(quantity, :start) - :decrement",

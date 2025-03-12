@@ -15,7 +15,19 @@ functions:
     handler: lib/services/auth/auth.handler
     events:
       - http:
-          path: auth
+          path: login
+          method: post
+          cors: true
+      - http:
+          path: register
+          method: post
+          cors: true
+      - http:
+          path: logout
+          method: post
+          cors: true
+      - http:
+          path: refreshToken
           method: post
           cors: true
 

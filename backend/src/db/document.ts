@@ -1,34 +1,25 @@
-import { MongoClient, Db, Collection, Document, InsertOneResult, UpdateResult, DeleteResult, Filter, WithId } from "mongodb";
-import * as fs from "fs";
-import * as path from "path";
+import type { Db, Collection, Document, InsertOneResult, UpdateResult, DeleteResult, Filter, WithId, OptionalUnlessRequiredId } from "mongodb";
+import { MongoClient } from "mongodb";
 
 export class DocumentDB {
-  private static _instance: DocumentDB;
-  private _client: MongoClient;
-  private _db: Db;
-  private _mongoUrl: string;
-  private _dbName: string;
-  private _sslCA: string | null = null;
+  static _instance: DocumentDB
+  private _client: MongoClient
+  private _db: Db
+  private _mongoUrl: string
+  private _dbName: string
 
   private constructor(url: string, db: string) {
     this._mongoUrl = url;
     this._dbName = db;
-
-    if (process.env.NODE_ENV === "production") {
-      this._sslCA = fs.readFileSync(path.resolve(__dirname, 'rds-combined-ca-bundle.pem')).toString('utf-8');
-    } else if (process.env.NODE_ENV === "development") {
-      // Set the MongoDB URL to localhost for development
-      this._mongoUrl = "mongodb://localhost:27017";
-    }
-
-    const options: any = {
+    this._mongoUrl = "mongodb://localhost:27017";
+  
+    const options: Record<string, boolean> = {
       useUnifiedTopology: true,
     };
 
     if (process.env.NODE_ENV === "production") {
       options.ssl = true;
       options.sslValidate = true;
-      options.sslCA = this._sslCA;
     }
 
     this._client = new MongoClient(this._mongoUrl, options);
@@ -68,7 +59,7 @@ export class DocumentDB {
     }
   }
 
-  async insert<T extends Document>(collectionName: string, data: any): Promise<InsertOneResult<T>> {
+  async insert<T extends Document>(collectionName: string, data: OptionalUnlessRequiredId<T>): Promise<InsertOneResult<T>> {
     try {
       await this.connect();
       const collection: Collection<T> = this._db.collection(collectionName);
@@ -90,7 +81,7 @@ export class DocumentDB {
     }
   }
 
-  async deleteOneByKey<T extends Document>(collectionName: string, key: string, value: string): Promise<DeleteResult> {
+  async deleteOneByKey(collectionName: string, key: string, value: string): Promise<DeleteResult> {
     try {
       await this.connect();
       const collection: Collection<Document> = this._db.collection(collectionName);
@@ -101,7 +92,7 @@ export class DocumentDB {
     }
   }
 
-  async fetch<T extends Document>(collectionName: string, query: Filter<T>): Promise<WithId<T>[]> {
+  async fetch<T extends Document>(collectionName: string, query: Filter<T>): Promise<Array<WithId<T>>> {
     try {
       await this.connect();
       const collection: Collection<T> = this._db.collection(collectionName);

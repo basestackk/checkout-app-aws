@@ -5,12 +5,12 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-export async function addPricingRuleHandler(command: any): Promise<string> {
+export async function addPricingRuleHandler(command: Record<string, unknown>): Promise<string> {
   try {
-    const { rule } = command.payload;
+    const { rule } = command.payload as Record<string, unknown>;
     const items = await getInventoryItems('inventory');
     
-    if (!items?.length) {
+    if (!items?.Items?.length) {
       throw new Error("No items found in the inventory.");
     }
 

@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 dotenv.config();
 
@@ -25,22 +25,21 @@ export class GPTService {
         store: true,
         messages: [
           {
-            "role": "user",
-            "content": prompt,
+            role: "user",
+            content: prompt,
           },
         ],
       });
 
       const outputResponse = completion.choices[0].message;
 
-      const cleanedContent = outputResponse.content!.replace(/^```json\n|\n```$/g, "").trim();
+      const cleanedContent = outputResponse
+        .content!.replace(/^```json\n|\n```$/g, "")
+        .trim();
 
-      try {
-        return JSON.parse(cleanedContent);
-      } catch (error) {
-        return cleanedContent;
-      }
+      return JSON.parse(cleanedContent);
     } catch (error) {
+      console.error("Error deleting data from DynamoDB:", error);
       throw new Error("Failed to generate output from OpenAI");
     }
   }

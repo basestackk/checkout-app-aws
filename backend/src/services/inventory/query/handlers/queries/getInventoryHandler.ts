@@ -1,7 +1,6 @@
 import {getInventoryItems} from "../../../../../repositories/";
 
 export async function GetInventoryHandler(
-  query: any,
 ): Promise<Record<string, any>> {
   try {
     console.log("Successfully received get items query");

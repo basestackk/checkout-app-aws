@@ -20,6 +20,7 @@ export const verifyAccessToken = (token: string): JwtPayload => {
   try {
     return jwt.verify(token, ACCESS_TOKEN_SECRET) as JwtPayload;
   } catch (error) {
+    console.log(error)
     throw new Error('Invalid or expired access token');
   }
 };
@@ -28,6 +29,7 @@ export const verifyRefreshToken = (token: string) : JwtPayload => {
   try {
     return jwt.verify(token, REFRESH_TOKEN_SECRET) as JwtPayload;
   } catch (error) {
+    console.log(error)
     throw new Error('Invalid or expired refresh token');
   }
 };

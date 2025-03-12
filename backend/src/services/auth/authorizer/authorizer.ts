@@ -1,4 +1,4 @@
-import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult} from 'aws-lambda';
+import type { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult} from 'aws-lambda';
 import Redis from '../../../db/redis'
 
 export const handler = async (

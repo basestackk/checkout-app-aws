@@ -1,8 +1,8 @@
 import {createOrder} from "../../../../../repositories/orderRepository";
 
 export async function OrderCreatedHandler(
-  payload: any,
-): Promise<Record<string, any>> {
+  payload: Record<string, unknown>,
+): Promise<unknown> {
   try {
     await createOrder('order-db-read', 'orders', payload);
 

@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 import { comparePassword } from "../utils/bcrypt";
 import { serialize } from "cookie";
@@ -51,7 +51,7 @@ export async function loginHandler(
       statusCode: 200,
       body: JSON.stringify({
         message: "Logged in successfully",
-        accessToken: accessToken,
+        accessToken,
       }),
       headers: {
         "Set-Cookie": [refreshTokenCookie].join(", "),

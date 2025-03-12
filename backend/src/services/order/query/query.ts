@@ -1,12 +1,13 @@
 import { GetOrdersHandler } from "./handlers/queries";
 import { OrderCreatedHandler } from "./handlers/events";
+import type {Payload} from '../../../types'
 
 type QueryHandlerMap = {
-  [key: string]: (query: any) => Promise<Record<string, any>>;
+  [key: string]: (query: Record<string, unknown>) => Promise<unknown>;
 };
 
 type EventHandlerMap = {
-  [key: string]: (payload: any) => Promise<Record<string, any>>;
+  [key: string]: (payload: Record<string, unknown>) => Promise<unknown>;
 };
 
 const queryHandlerMap: QueryHandlerMap = {
@@ -17,8 +18,8 @@ const eventHandlerMap: EventHandlerMap = {
   "orderCreated": OrderCreatedHandler,
 };
 
-async function handleQuery(query: any): Promise<Record<string, any>> {
-  const handler = queryHandlerMap[query.type];
+async function handleQuery(query: Record<string, unknown>): Promise<unknown> {
+  const handler = queryHandlerMap[query.type as string];
   if (handler) {
     return await handler(query);
   } else {
@@ -26,7 +27,7 @@ async function handleQuery(query: any): Promise<Record<string, any>> {
   }
 }
 
-async function handleEvent(payload: any, type: string): Promise<void> {
+async function handleEvent(payload: Record<string, unknown>, type: string): Promise<void> {
   const handler = eventHandlerMap[type];
   if (handler) {
     await handler(payload);
@@ -35,9 +36,9 @@ async function handleEvent(payload: any, type: string): Promise<void> {
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: Record<string, unknown>) => {
   try {
-    const payload = event.payload || event;
+    const payload: Payload  = event.payload || event;
     if (payload.query) {
       const response = await handleQuery(payload.query);
       return {
@@ -48,7 +49,7 @@ export const handler = async (event: any) => {
         }),
       };
     } else if (payload.detail) {
-      return await handleEvent(payload.detail, payload.detail.eventType);
+      return await handleEvent(payload.detail, payload.detail.eventType as string);
     } else {
       throw new Error(`Invalid payload, neither an event nor a query: ${payload}`);
     }

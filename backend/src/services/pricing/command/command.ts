@@ -1,16 +1,21 @@
 import { addPricingRuleHandler } from "./handlers/commands";
 
+interface Payload {
+  detail?: Record<string, unknown>;
+  command?: Record<string, unknown>;
+}
+
 
 type CommandHandlerMap = {
-  [key: string]: (command: any) => Promise<any>;
+  [key: string]: (command: Record<string, unknown>) => Promise<unknown>;
 };
 
 const commandHandlerMap: CommandHandlerMap = {
   "addPricingRule": addPricingRuleHandler,
 };
 
-async function handleCommand(command: any): Promise<any> {
-  const handler = commandHandlerMap[command.type];
+async function handleCommand(command: Record<string, unknown>): Promise<unknown> {
+  const handler = commandHandlerMap[command.type as string];
   if (handler) {
     return await handler(command);
   } else {
@@ -18,14 +23,14 @@ async function handleCommand(command: any): Promise<any> {
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: Record<string, unknown>) => {
   try {
-    const payload = event.payload || event;
+    const payload: Payload = event.payload || event;
 
     if (payload.command) {
       return await handleCommand(payload.command);
-    } else if (payload.detail) {
-      // Handle event case if necessary
+    } else {
+      throw new Error("invalid payload received")
     }
   } catch (error) {
     console.error("Error processing message:", error);

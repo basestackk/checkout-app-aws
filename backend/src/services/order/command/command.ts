@@ -1,27 +1,26 @@
-import { CreateOrderHandler } from "./handlers/commands";
-
-
+import { CreateOrderHandler } from "./handlers/commands"
+import type {Payload} from "../../../types"
 
 type CommandHandlerMap = {
-  [key: string]: (command: any) => Promise<Record<string, any>>;
+  [key: string]: (command: Record<string, unknown>) => Promise<Record<string, unknown>>
 };
 
 const commandHandlerMap: CommandHandlerMap = {
   "createOrder": CreateOrderHandler,
 };
 
-async function handleCommand(command: any): Promise<void> {
-  const handler = commandHandlerMap[command.type];
+async function handleCommand(command: Record<string, unknown>): Promise<void> {
+  const handler = commandHandlerMap[command.type as string]
   if (handler) {
     await handler(command);
   } else {
-    throw new Error(`Handler not found for command: ${command.type}`);
+    throw new Error(`Handler not found for command: ${command.type}`)
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: Record<string, unknown>) => {
   try {
-    const payload = event.payload || event;
+    const payload: Payload = event.payload || event;
 
     if (payload.command) {
       await handleCommand(payload.command);

@@ -1,6 +1,5 @@
 import {Dynamo} from '../db'
 
-
 export const getUser = async (tableName: string, email: string) => {
   try {
     const dynamo = Dynamo.instance('', tableName)

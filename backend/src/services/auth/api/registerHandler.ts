@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { hashPassword } from '../utils/bcrypt';
 import { getUser, addUser } from '../../../repositories/authRespository';
 

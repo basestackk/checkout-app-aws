@@ -1,8 +1,7 @@
 import {getPricingRules} from "../../../../../repositories/";
 
 export async function GetPricingRuleHandler(
-  query: any,
-): Promise<Record<string, any>> {
+): Promise<unknown> {
   try {
     return await getPricingRules("pricing")
   } catch (error) {

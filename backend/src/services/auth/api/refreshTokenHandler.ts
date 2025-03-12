@@ -1,12 +1,12 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt";
-import { serialize } from "cookie";
+import { serialize , parse } from "cookie";
 import { createClient } from "redis";
-import { parse } from "cookie";
+
 
 const redisClient = createClient({
   url: "redis://localhost:6379",
@@ -35,7 +35,7 @@ export async function refreshTokenHandler(
     redisClient.setEx(
       `accessToken:${accessToken}`,
       15 * 60,
-      JSON.stringify({ userId: userId }),
+      JSON.stringify({ userId }),
     );
 
     const refreshTokenCookie = serialize("refreshToken", newRefreshToken, {
@@ -50,7 +50,7 @@ export async function refreshTokenHandler(
       statusCode: 200,
       body: JSON.stringify({
         message: "Logged in successfully",
-        accessToken: accessToken,
+        accessToken,
       }),
       headers: {
         "Set-Cookie": [refreshTokenCookie].join(", "),

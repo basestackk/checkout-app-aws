@@ -10,7 +10,7 @@ export async function GetScannedItemsHandler(
 
     return {
       message: "Item scanned successfully",
-      items: items
+      items
     };
   } catch (error) {
     throw new Error("Error in Scannint Item: " + (error as Error).message);

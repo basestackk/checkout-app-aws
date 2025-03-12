@@ -20,6 +20,7 @@ export class MessageService {
   private eventBridge: AWS.EventBridge;
 
   constructor(source: string) {
+    console.log(source)
     this.lambda = new AWS.Lambda({endpoint: 'http://localhost:3002'});
     this.eventBridge = new AWS.EventBridge({endpoint: 'http://localhost:4000'});
   }
@@ -79,7 +80,7 @@ export class MessageService {
           DetailType: detailType,
           Detail: JSON.stringify({
             ...eventDetail,
-            eventType: eventType
+            eventType
           }),
         },
       ],

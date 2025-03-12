@@ -1,4 +1,6 @@
 import * as AWS from "aws-sdk";
+import type { AWSError } from "aws-sdk";
+import type { PromiseResult } from "aws-sdk/lib/request";
 
 export class Dynamo {
   static _instance: Dynamo;
@@ -21,7 +23,7 @@ export class Dynamo {
     return Dynamo._instance;
   }
 
-  async fetchOneByKey<T>(key: string, value: string): Promise<any> {
+  async fetchOneByKey(key: string, value: string): Promise<any> {
     const params = {
       TableName: this._tableName,
       Key: {
@@ -38,22 +40,21 @@ export class Dynamo {
     }
   }
 
-  async fetch<T>(query: object): Promise<any[]> {
+  async fetch<T>(query: Partial<T>): Promise<PromiseResult<AWS.DynamoDB.ScanOutput, AWSError>> {
     const params = {
       TableName: this._tableName,
       ...query,
     };
 
     try {
-      const result = await this._dynamoDB.scan(params).promise();
-      return result.Items || [];
+      return await this._dynamoDB.scan(params).promise();
     } catch (error) {
       console.error("Error fetching data from DynamoDB:", error);
       throw new Error("Error fetching data");
     }
   }
 
-  async insert<T>(data: any): Promise<void> {
+  async insert<T>(data: Partial<T>): Promise<void> {
     const params = {
       TableName: this._tableName,
       Item: data,
@@ -68,11 +69,11 @@ export class Dynamo {
     }
   }
 
-  async upsertItem(
+  async upsert<T extends { sku: string }>(
     tableName: string,
-    payload: Record<string, any>
+    payload: T 
   ): Promise<void> {
-    const updateExpressions: string[] = [];
+    const updateExpressions: Array<string> = [];
     const expressionAttributeValues: Record<string, any> = {};
 
     const { sku, ...attributes } = payload;
@@ -102,7 +103,7 @@ export class Dynamo {
   async update<T>(
     key: string,
     value: string,
-    updateData: object,
+    updateData: Partial<T>,
   ): Promise<void> {
     const params = {
       TableName: this._tableName,
@@ -122,7 +123,6 @@ export class Dynamo {
     };
 
     try {
-      // Try updating if the item exists, if not, insert a new item
       await this._dynamoDB.update(params).promise();
       console.log("Data updated in DynamoDB");
     } catch (error) {
@@ -196,7 +196,7 @@ export class Dynamo {
     }
   }
 
-  async deleteOneByKey<T>(key: string, value: string): Promise<any> {
+  async deleteOneByKey(key: string, value: string): Promise<any> {
     const params = {
       TableName: this._tableName,
       Key: {
@@ -213,7 +213,7 @@ export class Dynamo {
     }
   }
 
-  async delete<T>(query: object): Promise<void> {
+  async delete<T>(query: Partial<T>): Promise<void> {
     const params = {
       TableName: this._tableName,
       ...query,
@@ -226,12 +226,5 @@ export class Dynamo {
       console.error("Error deleting data from DynamoDB:", error);
       throw new Error("Error deleting data");
     }
-  }
-
-  async watchChanges<T>(): Promise<void> {
-    console.log(
-      "DynamoDB doesn't support change streams like MongoDB natively.",
-    );
-    // If needed, implement DynamoDB Streams or use Lambda triggers for real-time updates.
   }
 }

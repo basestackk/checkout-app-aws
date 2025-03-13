@@ -1,0 +1,276 @@
+{
+	"info": {
+		"_postman_id": "c34dc715-40de-415a-b40c-ca5aa08341b2",
+		"name": "checkout-app-aws",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36408862"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"your email\",\r\n    \"password\": \"Your password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE1OTQ4NDAsImV4cCI6MTc0MTU5NTc0MH0.6iaTfE5WDs39FN88OvZvLd6l1UIDOQov87ZZwbdZk68",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"demo@test.com\",\r\n    \"password\": \"Admin@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "graphql",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE1OTQ4NDAsImV4cCI6MTc0MTU5NTc0MH0.6iaTfE5WDs39FN88OvZvLd6l1UIDOQov87ZZwbdZk68",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"query\": \"mutation { scanItem(cartId: \\\"1234\\\", sku: \\\"item2\\\", name: \\\"item name\\\") { cartId items { sku name quantity } } }\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addItem",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE2MzYxOTEsImV4cCI6MTc0MTYzNzA5MX0.KGnZNDOkIyqnpuWQL1fss9XziWjbH2VNQECQi-TPhnU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"query\": \"mutation { addItem(sku: \\\"SKU12345\\\", name: \\\"Ipad\\\", quantity: 50, description: \\\"Ergonomic wireless mouse\\\", price: 29.99) { sku name quantity description price } }\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getInventoryItems",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE2MDExOTgsImV4cCI6MTc0MTYwMjA5OH0.uY34wUt3z3TKZzvM5hE2RkTrG9lDiDDoVHcAj8VNQ3g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"query\": \"query GetInventoryItems { items { sku name quantity description price } }\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addPricingRule",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE2MjgyMTYsImV4cCI6MTc0MTYyOTExNn0.1i80fDbClISXq5Ixc-lnpN5guJS_1w_lr6Sdq5sya3w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"query\": \"mutation AddPricingRule($rule: String!) { addPricingRule(rule: $rule) }\",\r\n  \"variables\": {\r\n    \"rule\": \"the brand new Super iPad will have a bulk discounted applied, where the price will drop to $499.99 each, if someone buys more than 4\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPricingRules",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxYWYxZjYyNy01MzNiLTRjNDYtOTRkNC05YTNmYzEyMWViODIiLCJpYXQiOjE3NDE2Mjg5ODgsImV4cCI6MTc0MTYyOTg4OH0.87tEZSJxDuKZz7NH8ZxOZkVivqScGOcSkDLcx6AuyFA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"query\": \"query { rules { sku discountType minQuantity discountAmount ruleText } }\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/dev/graphql",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"dev",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

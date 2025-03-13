@@ -50,27 +50,21 @@ Ensure you have the following services running locally before proceeding.
 
 ### Backend Setup
 
-1. Navigate to the `backend/src` directory:
+1. Navigate to the `backend` directory:
     ```bash
-    cd backend/src
+    cd backend
     ```
 
 2. Set up local databases using Docker:
     - Make sure you have Docker installed and running.
     - You can use Docker Compose or individual commands to set up **DynamoDB**, **Redis**, and **MongoDB** containers.
 
-3. Install backend dependencies and build the project:
+3. Install backend dependencies and start serverless offline:
     ```bash
-    yarn install
-    yarn build
+    ./deploy.sh
     ```
 
-4. Start the serverless offline environment:
-    ```bash
-    yarn serverless offline start
-    ```
-
-5. You can now test the API using **Postman**. The Postman collection for testing includes API endpoints for registering a new user and other operations.
+4. You can now test the API using **Postman**. The Postman collection for testing includes API endpoints for registering a new user and other operations.
 
 ---
 
@@ -86,8 +80,6 @@ To set up the backend services locally, make sure to configure Docker for the fo
 - **DynamoDB**: For storing transactional data.
 - **Redis**: For caching and temporary data.
 - **DocumentDB**: For document-based storage.
-
-You can find the Docker configurations inside the `docker-compose.yml` file (if available), or you can manually configure each service using their respective Docker images.
 
 ---
 

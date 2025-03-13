@@ -1,0 +1,85 @@
+service: auth-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  environment:
+    USERS_TABLE: ${env:USERS_TABLE}
+    REDIS_URL: ${env:REDIS_URL}
+    NODE_ENV: ${env:NODE_ENV}
+
+functions:
+  auth:
+    handler: lib/services/auth/auth.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+      - http:
+          path: register
+          method: post
+          cors: true
+      - http:
+          path: logout
+          method: post
+          cors: true
+      - http:
+          path: refreshToken
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    LambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: LambdaExecutionPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "dynamodb:Query"
+                    - "dynamodb:Scan"
+                    - "dynamodb:GetItem"
+                    - "dynamodb:PutItem"
+                    - "dynamodb:UpdateItem"
+                    - "redis:Get"
+                  Resource: "*"
+
+    RedisSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: "Allow Lambda functions to connect to Redis"
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: '6379'
+            ToPort: '6379'
+            CidrIp: "0.0.0.0/0"  # Adjust this according to your security requirements
+
+    RedisCluster:
+      Type: AWS::ElastiCache::ReplicationGroup
+      Properties:
+        ReplicationGroupId: "auth-redis-cluster"
+        CacheNodeType: cache.t3.micro
+        Engine: redis
+        NumCacheClusters: 1
+        AutomaticFailoverEnabled: false
+        SecurityGroupIds:
+          - Ref: RedisSecurityGroup
+
+  Outputs:
+    AuthServiceEndpoint:
+      Value: !Sub "https://${ApiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com"
+      Description: "URL of the Auth API Gateway endpoint"

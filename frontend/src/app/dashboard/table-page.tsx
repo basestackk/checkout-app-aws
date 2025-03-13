@@ -306,7 +306,7 @@ const TablePage = () => {
         title="Add New Product"
         description={""}
       >
-        <div className="space-y-4">
+        <div className="space-y-2">
           <Label>Product Name</Label>
           <Input
             value={newProduct.name}
@@ -334,13 +334,18 @@ const TablePage = () => {
           <Label>Price</Label>
           <Input
             type="number"
-            value={newProduct.price}
-            onChange={(e) =>
+            value={newProduct.price === 0 ? "" : newProduct.price} // Allow empty string when price is 0
+            onChange={(e) => {
+              const value = e.target.value;
+
+              // If the input is empty, set price to 0, otherwise parse it to float
+              const parsedPrice = value === "" ? 0 : parseFloat(value);
+
               setNewProduct({
                 ...newProduct,
-                price: parseFloat(e.target.value),
-              })
-            }
+                price: isNaN(parsedPrice) ? 0 : parsedPrice, // Ensure price is a valid number
+              });
+            }}
           />
 
           <Button onClick={handleAddProduct}>Add Product</Button>

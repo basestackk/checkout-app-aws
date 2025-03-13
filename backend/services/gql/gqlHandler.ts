@@ -115,7 +115,8 @@ async function addPricingRule(rule: string): Promise<string> {
 
 async function getPricingRules(): Promise<any> {
   const queryPayload = { type: "getPricingRules", payload: { } };
-  return await messageService.sendQuery("combined-service-dev-PricingServiceQuery", queryPayload);
+  const result = await messageService.sendQuery("combined-service-dev-PricingServiceQuery", queryPayload);
+  return result || [];
 }
 
 async function getInventoryItems(): Promise<any> {
@@ -128,15 +129,9 @@ async function getInventoryItems(): Promise<any> {
 
   try {
     const result = await messageService.sendQuery('combined-service-dev-InventoryServiceQuery', queryPayload);
-
     const parsedBody = JSON.parse(result.body);
-    const items = parsedBody.response?.items || [];
-
-    if (!Array.isArray(items)) {
-      throw new Error("Inventory service response does not contain a valid items array.");
-    }
-
-    return items; 
+    const items = parsedBody.response?.items?.Items || [];
+    return items
 
   } catch (error) {
     console.error('Error invoking InventoryService queryHandler', error);
@@ -150,9 +145,14 @@ const resolvers = {
       return await getCart(cartId);
     },
     items: async () => {
-      return await getInventoryItems();  // Resolver for getting items from inventory
+      const items = await getInventoryItems();
+      return items || [];
     },
-    rules: async() => await getPricingRules()
+    rules: async() =>{ 
+      const rules = await getPricingRules();
+      return rules || [];
+    }
+    
   },
   Mutation: {
     scanItem: async (_: any, { cartId, sku, name }: { cartId: string, sku: string, name: string }) => {

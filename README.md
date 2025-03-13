@@ -83,6 +83,23 @@ To set up the backend services locally, make sure to configure Docker for the fo
 
 ---
 
+## create dynamoDB tables:
+```bash
+aws dynamodb create-table    --table-name cart-db-read     --attribute-definitions         AttributeName=cartId,AttributeType=S     --key-schema         AttributeName=cartId,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
+
+aws dynamodb create-table    --table-name carts     --attribute-definitions         AttributeName=cartId,AttributeType=S     --key-schema         AttributeName=cartId,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
+
+aws dynamodb create-table    --table-name pricing     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000  
+
+aws dynamodb create-table    --table-name pricing-db-read     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
+
+aws dynamodb create-table    --table-name inventory-db-read     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
+
+aws dynamodb create-table    --table-name inventory     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000 
+
+aws dynamodb create-table    --table-name UsersTable     --attribute-definitions         AttributeName=email,AttributeType=S     --key-schema         AttributeName=email,KeyType=HASH   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000  
+```
+
 ## Additional Notes
 
 - This project utilizes **AWS services** like **EventBridge**, **API Gateway**, and **Serverless Framework** for backend deployment. If you're deploying to AWS, make sure you have the necessary credentials and configurations set up in the `serverless.yml` file.

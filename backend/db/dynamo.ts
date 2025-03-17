@@ -1,5 +1,6 @@
 import * as AWS from "aws-sdk";
 import type { AWSError } from "aws-sdk";
+import type { DocumentClient } from "aws-sdk/clients/dynamodb";
 import type { PromiseResult } from "aws-sdk/lib/request";
 
 export class Dynamo {
@@ -40,6 +41,22 @@ export class Dynamo {
     }
   }
 
+  async fetchItemsByKey(tableName: string, key: string, value: string): Promise<PromiseResult<AWS.DynamoDB.ScanOutput, AWSError>> {
+    try {
+      const params = {
+        TableName: tableName,
+        KeyConditionExpression: `${key} = :${key}`,
+        ExpressionAttributeValues: {
+          [`:${key}`]: value,
+        },
+      };
+      return await this._dynamoDB.query(params).promise();
+    } catch (error) {
+      console.error("Error fetching data from DynamoDB:", error);
+      throw new Error("Error fetching data");
+    }
+  }
+
   async fetch<T>(query: Partial<T>): Promise<PromiseResult<AWS.DynamoDB.ScanOutput, AWSError>> {
     const params = {
       TableName: this._tableName,
@@ -47,7 +64,7 @@ export class Dynamo {
     };
 
     try {
-      return await this._dynamoDB.scan(params).promise();
+      return await this._dynamoDB.query(params).promise();
     } catch (error) {
       console.error("Error fetching data from DynamoDB:", error);
       throw new Error("Error fetching data");
@@ -99,6 +116,15 @@ export class Dynamo {
     }
   }
 
+  async  batchWrites(requestItems: AWS.DynamoDB.DocumentClient.BatchWriteItemInput): Promise<void> {
+    try {
+      await this._dynamoDB.batchWrite(requestItems).promise();
+      console.log('Batch write completed');
+    } catch (error) {
+      console.error('Error performing batch write:', error);
+      throw new Error('Error performing batch write');
+    }
+  }
 
   async update<T>(
     key: string,
@@ -122,6 +148,16 @@ export class Dynamo {
       ReturnValues: "ALL_NEW",
     };
 
+    try {
+      await this._dynamoDB.update(params).promise();
+      console.log("Data updated in DynamoDB");
+    } catch (error) {
+      console.error("Error updating data in DynamoDB:", error);
+      throw new Error("Error updating data");
+    }
+  }
+
+  async updateOne(params: DocumentClient.UpdateItemInput): Promise<void> {
     try {
       await this._dynamoDB.update(params).promise();
       console.log("Data updated in DynamoDB");

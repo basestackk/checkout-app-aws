@@ -1,7 +1,23 @@
 import { ScanItemHandler } from "./handlers/commands";
+import { ItemScannedHandler } from "./handlers/events";
 
-const commandHandlerMap: Record<string, (command: any) => Promise<Record<string, any>>> = {
-  ScanItem: ScanItemHandler,
+const commandHandlerMap: Record<
+  string,
+  (command: any) => Promise<Record<string, any>>
+> = {
+  addItem: ScanItemHandler,
+};
+
+type EventHandlerMap = {
+  [eventSource: string]: {
+    [eventType: string]: (payload: any) => Promise<void>;
+  };
+};
+
+const eventHandlerMap: EventHandlerMap = {
+  CartService: {
+    ScanItem: ItemScannedHandler,
+  },
 };
 
 const handleCommand = async (command: any): Promise<void> => {
@@ -12,14 +28,26 @@ const handleCommand = async (command: any): Promise<void> => {
   await handler(command);
 };
 
-export const handler = async (event: any): Promise<void> => {
+async function handleEvent(source: string, payload: any, type: string): Promise<void> {
+  const handler = eventHandlerMap[source][type];
+  if (handler) {
+    await handler(payload);
+  } else {
+    throw new Error(`Handler not found for event: ${type}`)
+  }
+}
+
+export const handler = async (event: any): Promise<any> => {
   try {
     const { payload = event } = event;
-
     if (payload.command) {
-      await handleCommand(payload.command);
+      return await handleCommand(payload.command);
     } else if (payload.detail) {
-      // Handle event case if necessary
+      await handleEvent(payload.source, payload.detail, payload['detail-type']);
+    } else {
+      throw new Error(
+        `Invalid payload, neither an event nor a query: ${payload}`,
+      );
     }
   } catch (error) {
     console.error("Error processing message:", error);

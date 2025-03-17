@@ -346,13 +346,20 @@ functions:
     handler: lib/services/cart/command/command.handler
     description: Cart Service lambda function
     environment:
-      CART_TABLE_NAME: carts # DynamoDB table name
+      CART_TABLE_NAME: carts
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - 'CartService'
+            detail-type:
+              - 'ScanItem'
 
   CartServiceQuery:
     handler: lib/services/cart/query/query.handler
     description: Cart Service Query lambda function
     environment:
-      CART_TABLE_NAME: cart-db-read # DynamoDB table name
+      CART_TABLE_NAME: cart-db
     events:
       - eventBridge:
           pattern:
@@ -391,6 +398,19 @@ functions:
             detail-type:
               - "CartEvent"
 
+  cartKafkaService:
+    handler: lib/services/stream/scan.handler
+    events:
+      - kafka:
+          topic: scan-item-events
+          batchSize: 10
+          bootstrapServers:
+            - "localhost:9092" 
+          accessConfigurations:  # Optional: Add if your Kafka setup requires it
+            - principal: "arn:aws:iam::123456789012:role/kafka-access-role"
+              permission: "Read"
+          maximumRetryAttempts: 3
+
   eventBridgeTriggerOrder:
     handler: lib/services/order/query/query.handler
     events:
@@ -412,17 +432,22 @@ custom:
   serverless-offline:
     httpPort: 3001
   serverless-offline-aws-eventbridge:
-    port: 4000  # Shared EventBridge port
+    port: 4000
   dynamodb:
     start:
       port: 8000
-      inMemory: true  # Optional: Use in-memory database for quick testing
-      migrate: true   # Automatically creates tables based on resources section
+      inMemory: true
+      migrate: true
     seed:
-      domain: true  #
+      domain: true
   redis:
     host: "localhost"
-    port: 6379
+    port: 
+  kafka:
+    brokers:
+      - "localhost:9092"
+    topic: "scan-item-events"
+    groupId: "cart-service-consumer"
 
 # Additional build configuration
 build:

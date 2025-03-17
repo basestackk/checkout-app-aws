@@ -1,0 +1,14 @@
+app:
+    build: .
+    environment:
+      KAFKA_BROKERCONNECT: "kafka1:29092,kafka2:29093"
+    depends_on:
+      - kafka1
+      - kafka2
+      - zookeeper
+    healthcheck:
+      test: ["CMD", "nc", "-z", "kafka1", "9092"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 5s

@@ -1,18 +1,14 @@
-import {getItemsInCart} from "../../../../../repositories/cartRepository";
+import {getItemsInCart} from "../../../repositories/cartRepository";
+import type { GetCartItem } from "services/cart/models/payload/getCartItem";
+import type { CartItem } from "../../../models/domain";
 
 export async function GetScannedItemsHandler(
-  query: any,
-): Promise<Record<string, any>> {
+  query: GetCartItem,
+): Promise<Array<CartItem>> {
   try {
     console.log("Successfully received scan item command");
-
-    const items = await getItemsInCart("cart-db-read", query.payload)
-
-    return {
-      message: "Item scanned successfully",
-      items
-    };
+    return await getItemsInCart("cart-db", query.cartId);
   } catch (error) {
-    throw new Error("Error in Scannint Item: " + (error as Error).message);
+    throw new Error("Error in Scan Item: " + (error as Error).message);
   }
 }

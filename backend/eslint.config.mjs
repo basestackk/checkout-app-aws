@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
 import _import from "eslint-plugin-import";
-import { fixupPluginRules } from "@eslint/compat"
+import { fixupPluginRules } from "@eslint/compat";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["**/node_modules", "**/lib"],
+    ignores: ["**/node_modules", "**/lib", "**/tests", "jest.config.js"],
   },
   ...compat.extends(
     "eslint:recommended",
@@ -91,13 +91,13 @@ export default [
       ],
 
       "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/camelcase": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/interface-name-prefix": "off",
-      "@typescript-eslint/no-array-constructor": "off",
+      "@typescript-eslint/no-array-constructor": "error",
       "@typescript-eslint/no-use-before-define": "off",
       "@typescript-eslint/no-namespace": "off",
+      "@/semi": "off",
     },
   },
 ];

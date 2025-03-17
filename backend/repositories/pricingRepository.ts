@@ -6,8 +6,7 @@ async function addPricingRule(tableName: string, payload: any) {
     await dynamo.upsert(tableName, payload);
     return payload.ruleText;
   } catch (error) {
-    console.log(error)
-    throw new Error(`Failed to add or update pricing rule for sku ${payload.sku}`);
+    throw new Error(`Failed to add or update pricing rule for sku ${payload.sku} ${error}`);
   }
 }
 
@@ -15,9 +14,9 @@ async function getPricingRules(tableName: string) : Promise<unknown> {
   const dynamo = Dynamo.instance("", tableName);
   try {
     const table =  await dynamo.fetch({});
-    return table.Items
+    return table.Items;
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new Error(`Failed to fetch pricing rules`);
   }
 }

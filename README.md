@@ -64,13 +64,18 @@ Ensure you have the following services running locally before proceeding.
     ./deploy.sh
     ```
 
-4. You can now test the API using **Postman**. The Postman collection for testing includes API endpoints for registering a new user and other operations.
+4. Setup Kafka streamer for Item Scans:
+    ```bash
+    cd to root/backend/services/streamer
+    yarn build
+    docker-compose up --build
+    ```
 
----
-
-## Testing
-
-- The `Postman` collection can be found in the **tests** folder. It contains pre-configured requests for testing the backend API, including user registration.
+5. Test Scan:
+    ```bash
+    cd to root/backend/tests/cart
+    ts-node scanItemTests.ts
+    ```
 
 ---
 
@@ -85,15 +90,10 @@ To set up the backend services locally, make sure to configure Docker for the fo
 
 ## create dynamoDB tables:
 ```bash
-aws dynamodb create-table    --table-name cart-db-read     --attribute-definitions         AttributeName=cartId,AttributeType=S     --key-schema         AttributeName=cartId,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
 
 aws dynamodb create-table    --table-name carts     --attribute-definitions         AttributeName=cartId,AttributeType=S     --key-schema         AttributeName=cartId,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
 
 aws dynamodb create-table    --table-name pricing     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH   --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000  
-
-aws dynamodb create-table    --table-name pricing-db-read     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
-
-aws dynamodb create-table    --table-name inventory-db-read     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000
 
 aws dynamodb create-table    --table-name inventory     --attribute-definitions         AttributeName=sku,AttributeType=S     --key-schema         AttributeName=sku,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5     --endpoint-url http://localhost:8000 
 

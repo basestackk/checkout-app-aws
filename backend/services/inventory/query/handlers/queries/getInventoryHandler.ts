@@ -5,7 +5,7 @@ export async function GetInventoryHandler(
   try {
     console.log("Successfully received get items query");
 
-    const items = await getInventoryItems("inventory-db-read")
+    const items = await getInventoryItems("inventory-db")
 
     return { items };
   } catch (error) {

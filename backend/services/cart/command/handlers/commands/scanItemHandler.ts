@@ -1,4 +1,4 @@
-import { addItemToCart } from "../../../../../repositories/cartRepository";
+import { addItemToCart } from "../../../repositories/cartRepository";
 import { MessageService } from "../../../../../ipc/messaging-service";
 import { getInventoryItemBySku } from "../../../../../repositories";
 
@@ -21,11 +21,8 @@ export async function ScanItemHandler(command: any): Promise<Record<string, any>
 
     const ipc = MessageService.getInstance("");
 
-    await ipc.sendEvent(command.payload, "CartService", "itemAdded", "CartEvent");
+    return await ipc.sendEvent(command.payload, "CartService", "itemAdded", "CartEvent");
 
-    return {
-      message: "Item scanned successfully",
-    };
   } catch (error) {
     throw new Error("Error in Scan Item: " + (error as Error).message);
   }

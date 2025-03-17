@@ -1,0 +1,26 @@
+{
+    "name": "cart-service-consumer",
+    "version": "1.0.0",
+    "description": "Kafka consumer for cart service that processes events and sends them to EventBridge in batches",
+    "main": "lib/consumer.js",
+    "scripts": {
+      "lint": "eslint . --ext .ts",
+      "build": "tsc --build tsconfig.json",
+      "dev": "tsc --watch"
+    },
+    "dependencies": {
+      "aws-sdk": "^2.1197.0",
+      "kafkajs": "^2.1.0",
+      "tslib": "^2.5.0",
+      "dotenv": "^16.4.7"
+    },
+    "devDependencies": {
+      "typescript": "^4.5.4",
+      "@types/node": "^16.11.7",
+      "@types/aws-sdk": "^2.7.0"
+    },
+    "engines": {
+      "node": ">=14.0.0"
+    }
+  }
+  

@@ -1,1 +1,1 @@
-export * from './InventoryService'
+export * from './itemScannedHandler';

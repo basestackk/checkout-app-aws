@@ -19,10 +19,11 @@ export class MessageService {
   private lambda: AWS.Lambda;
   private eventBridge: AWS.EventBridge;
 
-  constructor(source: string) {
-    console.log(source)
-    this.lambda = new AWS.Lambda({endpoint: 'http://localhost:3002'});
-    this.eventBridge = new AWS.EventBridge({endpoint: 'http://localhost:4000'});
+  constructor(endpoint: string) {
+    console.log("using endpoint:",endpoint)
+    this.lambda = new AWS.Lambda({region: 'us-east-1', endpoint: 'http://localhost:3002'});
+    
+    this.eventBridge = new AWS.EventBridge({region: 'us-east-1', endpoint: "http://host.docker.internal:4000"});
   }
 
   public static getInstance(source: string): MessageService {
@@ -94,6 +95,17 @@ export class MessageService {
       throw new Error('Failed to send event to EventBridge');
     }
   }
+
+  public async sendBatchEvents(params: AWS.EventBridge.PutEventsRequest): Promise<any> {
+    try {
+      const result = await this.eventBridge.putEvents(params).promise();
+      return result;
+    } catch (error) {
+      console.error('Error sending event to EventBridge', error);
+      throw new Error('Failed to send Scan event to EventBridge');
+    }
+  }
+
 }
 
 export default MessageService;

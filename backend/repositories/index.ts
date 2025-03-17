@@ -1,5 +1,5 @@
 export * from "./orderRepository";
 export * from "./inventoryRepository";
-export * from "./cartRepository";
+export * from "../services/cart/repositories/cartRepository";
 export * from './pricingRepository';
 export * from './authRespository';

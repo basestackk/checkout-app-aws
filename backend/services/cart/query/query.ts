@@ -1,5 +1,4 @@
 import { GetScannedItemsHandler } from "./handlers/queries";
-import { ItemScannedHandler } from "./handlers/events";
 
 type QueryHandlerMap = {
   [key: string]: (query: any) => Promise<Record<string, any>>;
@@ -16,15 +15,13 @@ const queryHandlerMap: QueryHandlerMap = {
 };
 
 const eventHandlerMap: EventHandlerMap = {
-  "CartService": {
-      "itemAdded": ItemScannedHandler
-    }
+
 };
 
 async function handleQuery(query: any): Promise<Record<string, any>> {
   const handler = queryHandlerMap[query.type];
   if (handler) {
-    return await handler(query);
+    return await handler(query.payload);
   } else {
     throw new Error(`Handler not found for query: ${query.type}`);
   }
@@ -35,29 +32,21 @@ async function handleEvent(source: string, payload: any, type: string): Promise<
   if (handler) {
     await handler(payload);
   } else {
-    throw new Error(`Handler not found for event: ${type}`);
+    throw new Error(`Handler not found for event: ${type}`)
   }
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: any) : Promise<any> => {
   try {
-    const payload = event.payload || event;
+    const payload = event.payload || event
     if (payload.query) {
-      const response = await handleQuery(payload.query);
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'Query processed successfully',
-          data: response,
-        }),
-      };
+      return await handleQuery(payload.query);
     } else if (payload.detail) {
-      return await handleEvent(payload.source, payload.detail, payload.detail.eventType);
+       await handleEvent(payload.source, payload.detail, payload.detailType);
     } else {
       throw new Error(`Invalid payload, neither an event nor a query: ${payload}`);
     }
   } catch (error) {
-    console.error("Error processing message:", error);
-    throw error;
+    throw new Error(`Failed to fetch cart items: ${error}`);
   }
 };

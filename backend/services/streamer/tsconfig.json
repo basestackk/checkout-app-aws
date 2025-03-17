@@ -9,15 +9,10 @@
     "target": "es2017",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@ipc/*": ["ipc/*"],
-      "@repositories/*": ["repositories/*"]
-    },
-    "types": ["jest"]
+    "baseUrl": "."
   },
   "compileOnSave": true,
   "include": [
-    "**/*.ts", "./tests/"],
+    "**/*.ts"],
   "exclude": ["node_modules"]
 }

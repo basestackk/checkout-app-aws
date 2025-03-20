@@ -103,7 +103,14 @@ aws dynamodb create-table    --table-name UsersTable     --attribute-definitions
 ## Additional Notes
 
 - This project utilizes **AWS services** like **EventBridge**, **API Gateway**, and **Serverless Framework** for backend deployment. If you're deploying to AWS, make sure you have the necessary credentials and configurations set up in the `serverless.yml` file.
-  
+
+- 
+
+## Demo Videos:
+
+https://youtu.be/ymWWVYZUuwM
+https://youtu.be/WkB7WR8UJLo
+
 ---
 
 

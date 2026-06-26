@@ -1,6 +1,18 @@
 # Checkout App with AWS
 
-This is a checkout application built to demonstrate **microservices** and **event-driven architecture** with **AWS**. The app leverages modern web technologies and AWS services to build scalable, efficient, and maintainable solutions.
+This is a checkout application built to demonstrate **microservices** and **event-driven architecture** with **AWS**. The app leverages modern web technologies and AWS services to build scalable, efficient, and maintainable solutions. 
+
+Here's the complete demo
+
+## Product Demos
+This repository includes demonstrations of our AI-powered pricing rules classification, which leverages unstructured data to automate and optimize pricing strategies.
+
+| Demo Description | Watch Video |
+| :--- | :--- |
+| **Pricing Rules Classification** | [![](https://img.youtube.com/vi/ymWWVYZUuwM/0.jpg)](https://www.youtube.com/watch?v=ymWWVYZUuwM) |
+| **System Overview & Workflow** | [![](https://img.youtube.com/vi/ymWWVYZUuwM/0.jpg)](https://www.youtube.com/watch?v=ymWWVYZUuwM) |
+
+*Note: The videos above demonstrate how the system identifies and categorizes complex pricing rules from unstructured data sources.*
 
 ## Tech Stack
 
